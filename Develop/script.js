@@ -2,18 +2,25 @@
 let validUserInput = false;
 
 function generatePassword() {
-  let genPassword = "dummy@K9";
+  let genPassword = "";
   let pwdLenNum;
-  let responseCode;
-
+  let randNumMult;
+    
   // Index 0 = lower case. 
   // Index 1 = upper case. 
   // Index 2 = numeric. 
   // Index 3 = special characters. 
   const charTypeSelected = [false,false,false,false];
   const charTypeText = ["lower case", "upper case", "numeric", "special"];
+  const charTypeString = ["abcdefghijklmnopqrstuvwxyz",
+                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                          "0123456789",
+                          "!#$%&'()*+,-./:;<=>?@[\]^_`{|}~"];
+  let allCharTypes = "";
+  let charCount = 0;
   let continuing = true;
 
+  // Input password length
   while (!validUserInput) {
     let pwdLen = prompt("Password Length?\n(Between 8 and 128 characters)");
     if (pwdLen === null) {
@@ -22,14 +29,16 @@ function generatePassword() {
       // Converts to a number
       pwdLenNum = +pwdLen;
       if (isNaN(pwdLenNum)) {
-        responseCode = alert("Must be a number.");
+        alert("Must be a number.");
       } else if (pwdLenNum < 8 || pwdLenNum > 128) {
-        responseCode = alert("Must be at least 8 and at most 128 characters.");
+        alert("Must be at least 8 and at most 128 characters.");
       } else {
         validUserInput = true;
       }
     }
   }
+
+  // Input character types
 
   // Index 0 = lower case. 
   // Index 1 = upper case. 
@@ -49,9 +58,27 @@ function generatePassword() {
     }
   }
   
+  // Generate password
+  // Ensure selected character types are included in password, 
+  //   and build all-types string for only selected types
+  for (i = 0; i < 4; i++) {
+    if (charTypeSelected[i]) {
+      randNumMult = Math.trunc(charTypeString[i].length * Math.random());
+      genPassword = genPassword + charTypeString[i].charAt(randNumMult);
+      allCharTypes = allCharTypes + charTypeString[i];
+      charCount++
+    }
+  }
+
+  // Build rest of password to correct length from all types
+  i = charCount + 1;
+  for (charCount = i; charCount < (pwdLenNum + 1); charCount++) {
+    randNumMult = Math.trunc(allCharTypes.length * Math.random());
+    genPassword = genPassword + allCharTypes.charAt(randNumMult);
+  }
 
   return genPassword;
-}
+}   // End function generatePassword()
 
 // Get references to the #generate element
 var generateBtn = document.querySelector("#generate");
